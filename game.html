@@ -1,199 +1,249 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Лабиринт</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: Rubik;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh;
-            margin: 0;
-            background-color: #1A1A1A;
-            overflow: hidden;
-        }
-        .maze {
-            display: grid;
-            grid-template-columns: repeat(10, 30px);
-            grid-template-rows: repeat(10, 30px);
-            gap: 0px;
-            border: 10px solid #017550;
-        }
-        .cell {
-            width: 30px;
-            height: 30px;
-            background-color: #1A1A1A;
-            border: 0px solid #1A1A1A;
-            position: relative;
-        }
-        .wall {
-            background-color: #017550;
-        }
-        .player {
-            background-color: #FF842C;
-            border-radius: 50%;
-        }
-        .goal {
-            background-color: #8A49A1;
-        }
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #017550;
-            color: #DDFFFE;
-            border: none;
-            border-radius: 30px;
-            font-size: 15px;
-            cursor: pointer;
-            font-family: 'Rubik';
-            font-weight: 300;
-            transition: background-color 0.5s ease, transform 0.5s ease;
-        }
-        button:hover {
-            background-color: #121212;
-            transform: scale(1.1);
-        }
-        button:active {
-            background-color: #017550;
-            transform: scale(1.05);
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Лабиринт</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet" />
+<style>
+  body {
+    font-family: Rubik;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    background-color: #1A1A1A;
+    overflow: hidden;
+  }
+  .maze {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(10, 30px);
+    grid-template-rows: repeat(10, 30px);
+    gap: 0px;
+    border: 10px solid #017550;
+    width: 300px;
+    height: 300px;
+  }
+  .cell {
+    width: 30px;
+    height: 30px;
+    background-color: #1A1A1A;
+    border: 0px solid #1A1A1A;
+    position: relative;
+  }
+  .wall {
+    background-color: #017550;
+  }
+  .goal {
+    background-color: #8A49A1;
+  }
+  .player {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: #FF842C;
+    border-radius: 50%;
+    transition: top 0.3s ease, left 0.3s ease;
+    pointer-events: none;
+  }
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #017550;
+    color: #DDFFFE;
+    border: none;
+    border-radius: 30px;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: 'Rubik';
+    font-weight: 300;
+    transition: background-color 0.5s ease, transform 0.5s ease;
+    user-select: none;
+  }
+  button:hover {
+    background-color: #121212;
+    transform: scale(1.1);
+  }
+  button:active {
+    background-color: #017550;
+    transform: scale(1.05);
+  }
+  .touch-hover {
+    background-color: #121212 !important;
+    transform: scale(1.1) !important;
+  }
+</style>
 </head>
 <body>
-    <div class="maze" id="maze"></div>
-    <button onclick="generateNewMaze()">Обновить лабиринт</button>
-    <script>
-        const rows = 10;
-        const cols = 10;
-        let mazeData = generateRandomMaze(); 
-        let playerPosition = { x: 0, y: 0 };
-        const mazeContainer = document.getElementById('maze');  
-        function generateRandomMaze() {
-            const maze = [];
-            for (let y = 0; y < rows; y++) {
-                maze[y] = [];
-                for (let x = 0; x < cols; x++) {
-                    maze[y][x] = Math.random() > 0.3 ? 0 : 1; 
-                }
-            }
-            maze[0][0] = 0; 
-            maze[rows - 1][cols - 1] = 2; 
-            if (!isPathAvailable(maze)) {
-                return generateRandomMaze(); 
-            }
-            return maze;
+  <div class="maze" id="maze"></div>
+  <button id="refreshBtn" onclick="generateNewMaze()">Обновить лабиринт</button>
+
+  <script>
+    const rows = 10;
+    const cols = 10;
+    let mazeData = generateRandomMaze();
+    let playerPosition = { x: 0, y: 0 };
+    const mazeContainer = document.getElementById('maze');
+
+    const playerDiv = document.createElement('div');
+    playerDiv.classList.add('player');
+    mazeContainer.appendChild(playerDiv);
+
+    function generateRandomMaze() {
+      const maze = [];
+      for (let y = 0; y < rows; y++) {
+        maze[y] = [];
+        for (let x = 0; x < cols; x++) {
+          maze[y][x] = Math.random() > 0.3 ? 0 : 1;
         }
-        function isPathAvailable(maze) {
-            const visited = Array.from({ length: rows }, () => Array(cols).fill(false));
-            const queue = [{ x: 0, y: 0 }]; 
-            const directions = [
-                { dx: 0, dy: -1 }, 
-                { dx: 1, dy: 0 }, 
-                { dx: 0, dy: 1 }, 
-                { dx: -1, dy: 0 }, 
-            ];
-            visited[0][0] = true;
-            while (queue.length > 0) {
-                const { x, y } = queue.shift();
-                if (x === cols - 1 && y === rows - 1) {
-                    return true;
-                }
-                for (const { dx, dy } of directions) {
-                    const nx = x + dx;
-                    const ny = y + dy;
-                    if (nx >= 0 && ny >= 0 && nx < cols && ny < rows && maze[ny][nx] !== 1 && !visited[ny][nx]) {
-                        visited[ny][nx] = true;
-                        queue.push({ x: nx, y: ny });
-                    }
-                }
-            }
-            return false; 
+      }
+      maze[0][0] = 0;
+      maze[rows - 1][cols - 1] = 2;
+      if (!isPathAvailable(maze)) {
+        return generateRandomMaze();
+      }
+      return maze;
+    }
+
+    function isPathAvailable(maze) {
+      const visited = Array.from({ length: rows }, () => Array(cols).fill(false));
+      const queue = [{ x: 0, y: 0 }];
+      const directions = [
+        { dx: 0, dy: -1 },
+        { dx: 1, dy: 0 },
+        { dx: 0, dy: 1 },
+        { dx: -1, dy: 0 },
+      ];
+      visited[0][0] = true;
+      while (queue.length > 0) {
+        const { x, y } = queue.shift();
+        if (x === cols - 1 && y === rows - 1) {
+          return true;
         }
-        function renderMaze() {
-            mazeContainer.innerHTML = '';
-            for (let y = 0; y < rows; y++) {
-                for (let x = 0; x < cols; x++) {
-                    const cell = document.createElement('div');
-                    cell.classList.add('cell');
-                    if (mazeData[y][x] === 1) {
-                        cell.classList.add('wall'); 
-                    } else if (mazeData[y][x] === 2) {
-                        cell.classList.add('goal'); 
-                    }
-                    mazeContainer.appendChild(cell);
-                }
-            }
-            const cells = mazeContainer.getElementsByClassName('cell');
-            const index = playerPosition.y * cols + playerPosition.x;
-            cells[index].classList.add('player');
+        for (const { dx, dy } of directions) {
+          const nx = x + dx;
+          const ny = y + dy;
+          if (
+            nx >= 0 &&
+            ny >= 0 &&
+            nx < cols &&
+            ny < rows &&
+            maze[ny][nx] !== 1 &&
+            !visited[ny][nx]
+          ) {
+            visited[ny][nx] = true;
+            queue.push({ x: nx, y: ny });
+          }
         }
-        function generateNewMaze() {
-            mazeData = generateRandomMaze(); 
-            playerPosition = { x: 0, y: 0 }; 
-            renderMaze(); 
+      }
+      return false;
+    }
+
+    function renderMaze() {
+      mazeContainer.innerHTML = '';
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const cell = document.createElement('div');
+          cell.classList.add('cell');
+          if (mazeData[y][x] === 1) cell.classList.add('wall');
+          else if (mazeData[y][x] === 2) cell.classList.add('goal');
+          mazeContainer.appendChild(cell);
         }
-        function movePlayer(direction) {
-            let newX = playerPosition.x;
-            let newY = playerPosition.y;
-            if (direction === 'up' && playerPosition.y > 0 && mazeData[playerPosition.y - 1][playerPosition.x] !== 1) {
-                newY -= 1;
-            } else if (direction === 'down' && playerPosition.y < rows - 1 && mazeData[playerPosition.y + 1][playerPosition.x] !== 1) {
-                newY += 1;
-            } else if (direction === 'left' && playerPosition.x > 0 && mazeData[playerPosition.y][playerPosition.x - 1] !== 1) {
-                newX -= 1;
-            } else if (direction === 'right' && playerPosition.x < cols - 1 && mazeData[playerPosition.y][playerPosition.x + 1] !== 1) {
-                newX += 1;
-            }
-            if (mazeData[newY][newX] === 2) {
-                alert('Поздравляем! Вы в Jungle!');
-            }
-            playerPosition = { x: newX, y: newY };
-            renderMaze();
-        }
-        let touchStartX = 0;
-        let touchStartY = 0;
-        window.addEventListener('touchstart', (event) => {
-            const touch = event.touches[0];
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
-        });
-        window.addEventListener('touchend', (event) => {
-            const touch = event.changedTouches[0];
-            const touchEndX = touch.clientX;
-            const touchEndY = touch.clientY;
-            const diffX = touchEndX - touchStartX;
-            const diffY = touchEndY - touchStartY;
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                if (diffX > 0) {
-                    movePlayer('right');
-                } else {
-                    movePlayer('left');
-                }
-            } else {
-                if (diffY > 0) {
-                    movePlayer('down');
-                } else {
-                    movePlayer('up');
-                }
-            }
-        });
-        window.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowUp') {
-                movePlayer('up');
-            } else if (event.key === 'ArrowDown') {
-                movePlayer('down');
-            } else if (event.key === 'ArrowLeft') {
-                movePlayer('left');
-            } else if (event.key === 'ArrowRight') {
-                movePlayer('right');
-            }
-        });
-        renderMaze();
-    </script>
+      }
+      mazeContainer.appendChild(playerDiv);
+      updatePlayerPosition();
+    }
+
+    function updatePlayerPosition() {
+      playerDiv.style.left = playerPosition.x * 30 + 'px';
+      playerDiv.style.top = playerPosition.y * 30 + 'px';
+    }
+
+    function generateNewMaze() {
+      mazeData = generateRandomMaze();
+      playerPosition = { x: 0, y: 0 };
+      renderMaze();
+    }
+
+    function movePlayer(direction) {
+      let newX = playerPosition.x;
+      let newY = playerPosition.y;
+
+      if (direction === 'up' && playerPosition.y > 0 && mazeData[playerPosition.y - 1][playerPosition.x] !== 1) {
+        newY -= 1;
+      } else if (direction === 'down' && playerPosition.y < rows - 1 && mazeData[playerPosition.y + 1][playerPosition.x] !== 1) {
+        newY += 1;
+      } else if (direction === 'left' && playerPosition.x > 0 && mazeData[playerPosition.y][playerPosition.x - 1] !== 1) {
+        newX -= 1;
+      } else if (direction === 'right' && playerPosition.x < cols - 1 && mazeData[playerPosition.y][playerPosition.x + 1] !== 1) {
+        newX += 1;
+      }
+
+      if (mazeData[newY][newX] === 2) {
+        alert('Поздравляем! Вы в Jungle!');
+      }
+
+      playerPosition = { x: newX, y: newY };
+      updatePlayerPosition();
+    }
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowUp') movePlayer('up');
+      else if (event.key === 'ArrowDown') movePlayer('down');
+      else if (event.key === 'ArrowLeft') movePlayer('left');
+      else if (event.key === 'ArrowRight') movePlayer('right');
+    });
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    window.addEventListener('touchstart', (event) => {
+      const touch = event.touches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+    });
+
+    window.addEventListener('touchend', (event) => {
+      const touch = event.changedTouches[0];
+      const touchEndX = touch.clientX;
+      const touchEndY = touch.clientY;
+      const diffX = touchEndX - touchStartX;
+      const diffY = touchEndY - touchStartY;
+
+      if (Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX > 0) movePlayer('right');
+        else movePlayer('left');
+      } else {
+        if (diffY > 0) movePlayer('down');
+        else movePlayer('up');
+      }
+    });
+
+    // Эффект клика для кнопки при таче — добавляем и сразу убираем класс с перерисовкой
+    const refreshBtn = document.getElementById('refreshBtn');
+
+    refreshBtn.addEventListener('touchstart', () => {
+      refreshBtn.classList.add('touch-hover');
+    });
+
+    refreshBtn.addEventListener('touchend', () => {
+      refreshBtn.classList.remove('touch-hover');
+      // Принудительный reflow
+      void refreshBtn.offsetWidth;
+      // Страховочный таймаут
+      setTimeout(() => {
+        refreshBtn.classList.remove('touch-hover');
+      }, 50);
+    });
+
+    refreshBtn.addEventListener('touchcancel', () => {
+      refreshBtn.classList.remove('touch-hover');
+    });
+
+    renderMaze();
+  </script>
 </body>
 </html>
