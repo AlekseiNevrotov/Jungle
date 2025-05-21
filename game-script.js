@@ -139,24 +139,17 @@ window.addEventListener('touchend', (event) => {
   }
 });
 const refreshBtn = document.getElementById('refreshBtn');
-let touchTimeout;
-function removeTouchHover() {
-  clearTimeout(touchTimeout);
-  refreshBtn.classList.remove('touch-hover');
-}
-refreshBtn.addEventListener('touchstart', () => {
+refreshBtn.addEventListener('touchstart', (event) => {
+  event.preventDefault();
   refreshBtn.classList.add('touch-hover');
-  clearTimeout(touchTimeout);
-  touchTimeout = setTimeout(() => {
-    refreshBtn.classList.remove('touch-hover');
-  }, 1200);
 });
 refreshBtn.addEventListener('touchend', (event) => {
   event.preventDefault();
-  removeTouchHover();
+  refreshBtn.classList.remove('touch-hover');
   generateNewMaze();
 });
-refreshBtn.addEventListener('touchcancel', removeTouchHover);
-refreshBtn.addEventListener('touchmove', removeTouchHover);
+refreshBtn.addEventListener('touchcancel', () => {
+  refreshBtn.classList.remove('touch-hover');
+});
 refreshBtn.addEventListener('click', generateNewMaze);
 renderMaze();
