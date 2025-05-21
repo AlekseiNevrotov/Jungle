@@ -64,6 +64,8 @@ body {
     transform: scale(1.05);
   }
   .touch-hover {
-    background-color: #121212 !important;
-    transform: scale(1.1) !important;
-  }  
+  background-color: #121212 !important;
+  transform: scale(1.1) !important;
+  box-shadow: 0 0 8px #121212;
+  user-select: none;
+}
