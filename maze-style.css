@@ -1,0 +1,69 @@
+body {
+    font-family: Rubik;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    background-color: #1A1A1A;
+    overflow: hidden;
+  }
+  .maze {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(10, 30px);
+    grid-template-rows: repeat(10, 30px);
+    gap: 0px;
+    border: 10px solid #017550;
+    width: 300px;
+    height: 300px;
+  }
+  .cell {
+    width: 30px;
+    height: 30px;
+    background-color: #1A1A1A;
+    border: 0px solid #1A1A1A;
+    position: relative;
+  }
+  .wall {
+    background-color: #017550;
+  }
+  .goal {
+    background-color: #8A49A1;
+  }
+  .player {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: #FF842C;
+    border-radius: 50%;
+    transition: top 0.3s ease, left 0.3s ease;
+    pointer-events: none;
+  }
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #017550;
+    color: #DDFFFE;
+    border: none;
+    border-radius: 30px;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: 'Rubik';
+    font-weight: 300;
+    transition: background-color 0.5s ease, transform 0.5s ease;
+    user-select: none;
+  }
+  button:hover {
+    background-color: #121212;
+    transform: scale(1.1);
+  }
+  button:active {
+    background-color: #017550;
+    transform: scale(1.05);
+  }
+  .touch-hover {
+    background-color: #121212 !important;
+    transform: scale(1.1) !important;
+  }  
