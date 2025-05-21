@@ -80,13 +80,29 @@ function generateNewMaze() {
 function movePlayer(direction) {
   let newX = playerPosition.x;
   let newY = playerPosition.y;
-  if (direction === 'up' && playerPosition.y > 0 && mazeData[playerPosition.y - 1][playerPosition.x] !== 1) {
+  if (
+    direction === 'up' &&
+    playerPosition.y > 0 &&
+    mazeData[playerPosition.y - 1][playerPosition.x] !== 1
+  ) {
     newY -= 1;
-  } else if (direction === 'down' && playerPosition.y < rows - 1 && mazeData[playerPosition.y + 1][playerPosition.x] !== 1) {
+  } else if (
+    direction === 'down' &&
+    playerPosition.y < rows - 1 &&
+    mazeData[playerPosition.y + 1][playerPosition.x] !== 1
+  ) {
     newY += 1;
-  } else if (direction === 'left' && playerPosition.x > 0 && mazeData[playerPosition.y][playerPosition.x - 1] !== 1) {
+  } else if (
+    direction === 'left' &&
+    playerPosition.x > 0 &&
+    mazeData[playerPosition.y][playerPosition.x - 1] !== 1
+  ) {
     newX -= 1;
-  } else if (direction === 'right' && playerPosition.x < cols - 1 && mazeData[playerPosition.y][playerPosition.x + 1] !== 1) {
+  } else if (
+    direction === 'right' &&
+    playerPosition.x < cols - 1 &&
+    mazeData[playerPosition.y][playerPosition.x + 1] !== 1
+  ) {
     newX += 1;
   }
   if (mazeData[newY][newX] === 2) {
@@ -123,16 +139,24 @@ window.addEventListener('touchend', (event) => {
   }
 });
 const refreshBtn = document.getElementById('refreshBtn');
+let touchTimeout;
+function removeTouchHover() {
+  clearTimeout(touchTimeout);
+  refreshBtn.classList.remove('touch-hover');
+}
 refreshBtn.addEventListener('touchstart', () => {
   refreshBtn.classList.add('touch-hover');
+  clearTimeout(touchTimeout);
+  touchTimeout = setTimeout(() => {
+    refreshBtn.classList.remove('touch-hover');
+  }, 1200);
 });
 refreshBtn.addEventListener('touchend', (event) => {
   event.preventDefault();
-  refreshBtn.classList.remove('touch-hover');
+  removeTouchHover();
   generateNewMaze();
 });
-refreshBtn.addEventListener('touchcancel', () => {
-  refreshBtn.classList.remove('touch-hover');
-});
+refreshBtn.addEventListener('touchcancel', removeTouchHover);
+refreshBtn.addEventListener('touchmove', removeTouchHover);
 refreshBtn.addEventListener('click', generateNewMaze);
 renderMaze();
