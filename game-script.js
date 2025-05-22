@@ -6,6 +6,7 @@ const mazeContainer = document.getElementById('maze');
 const playerDiv = document.createElement('div');
 playerDiv.classList.add('player');
 mazeContainer.appendChild(playerDiv);
+const steam = document.getElementById('steam');
 function generateRandomMaze() {
   const maze = [];
   for (let y = 0; y < rows; y++) {
@@ -55,7 +56,7 @@ function isPathAvailable(maze) {
   return false;
 }
 function renderMaze() {
-  mazeContainer.innerHTML = '';
+  mazeContainer.querySelectorAll('.cell').forEach(cell => cell.remove());
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
       const cell = document.createElement('div');
@@ -65,12 +66,16 @@ function renderMaze() {
       mazeContainer.appendChild(cell);
     }
   }
-  mazeContainer.appendChild(playerDiv);
   updatePlayerPosition();
+  updateSteamPosition();
 }
 function updatePlayerPosition() {
   playerDiv.style.left = playerPosition.x * 30 + 'px';
   playerDiv.style.top = playerPosition.y * 30 + 'px';
+}
+function updateSteamPosition() {
+  steam.style.left = (cols - 1) * 30 + 'px';
+  steam.style.top = (rows - 1) * 30 - 50 + 'px';
 }
 function generateNewMaze() {
   mazeData = generateRandomMaze();
