@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Лабиринт с паром</title>
+<title>Лабиринт</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23121212'/></svg>" type="image/svg+xml" />
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet" />
 <style>
   body {
@@ -26,7 +27,6 @@
     border: 10px solid #017550;
     width: 300px;
     height: 300px;
-    background-color: #1A1A1A;
   }
   .cell {
     width: 30px;
@@ -40,6 +40,7 @@
   }
   .goal {
     background-color: #8A49A1;
+    position: relative;
   }
   .player {
     position: absolute;
@@ -49,15 +50,7 @@
     border-radius: 50%;
     transition: top 0.3s ease, left 0.3s ease;
     pointer-events: none;
-    z-index: 2;
-  }
-  #steam {
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    pointer-events: none;
-    z-index: 3;
-    filter: drop-shadow(0 0 4px rgba(255 255 255 / 0.7));
+    z-index: 10;
   }
   button {
     margin-top: 20px;
@@ -72,10 +65,11 @@
     font-weight: 300;
     transition: background-color 0.5s ease, transform 0.5s ease;
     user-select: none;
-    -webkit-tap-highlight-color: transparent; 
+    -webkit-tap-highlight-color: transparent;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    touch-action: manipulation;
   }
   button:hover {
     background-color: #121212;
@@ -94,26 +88,52 @@
     -moz-user-select: none;
     -ms-user-select: none;
   }
+  /* Пар над финишем */
+  .steam {
+    position: absolute;
+    width: 12px;
+    height: 20px;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 80%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation: steamUp 2s ease-in-out infinite;
+    opacity: 0.8;
+  }
+  .steam:nth-child(1) {
+    left: 50%;
+    top: 100%;
+    animation-delay: 0s;
+    transform: translateX(-50%) scale(1);
+  }
+  .steam:nth-child(2) {
+    left: 40%;
+    top: 110%;
+    animation-delay: 0.7s;
+    transform: translateX(-50%) scale(0.8);
+  }
+  .steam:nth-child(3) {
+    left: 60%;
+    top: 115%;
+    animation-delay: 1.3s;
+    transform: translateX(-50%) scale(0.9);
+  }
+
+  @keyframes steamUp {
+    0% {
+      transform: translateX(-50%) translateY(0) scale(1);
+      opacity: 0.8;
+    }
+    50% {
+      opacity: 0.3;
+    }
+    100% {
+      transform: translateX(-50%) translateY(-30px) scale(1.1);
+      opacity: 0;
+    }
+  }
 </style>
 </head>
 <body>
-  <div class="maze" id="maze">
-    <!-- steam SVG outside JS rendering -->
-    <svg id="steam" viewBox="0 0 60 60" aria-hidden="true" >
-      <circle cx="30" cy="50" r="4" fill="white" opacity="0.2">
-        <animate attributeName="cy" values="50;20" dur="2s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.2;0" dur="2s" repeatCount="indefinite"/>
-      </circle>
-      <circle cx="35" cy="55" r="3" fill="white" opacity="0.15">
-        <animate attributeName="cy" values="55;25" dur="2.5s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.15;0" dur="2.5s" repeatCount="indefinite"/>
-      </circle>
-      <circle cx="25" cy="52" r="3" fill="white" opacity="0.18">
-        <animate attributeName="cy" values="52;22" dur="2.2s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.18;0" dur="2.2s" repeatCount="indefinite"/>
-      </circle>
-    </svg>
-  </div>
+  <div class="maze" id="maze"></div>
   <button id="refreshBtn">Обновить лабиринт</button>
 
 <script>
@@ -122,10 +142,10 @@
   let mazeData = generateRandomMaze();
   let playerPosition = { x: 0, y: 0 };
   const mazeContainer = document.getElementById('maze');
+
   const playerDiv = document.createElement('div');
   playerDiv.classList.add('player');
   mazeContainer.appendChild(playerDiv);
-  const steam = document.getElementById('steam');
 
   function generateRandomMaze() {
     const maze = [];
@@ -135,8 +155,8 @@
         maze[y][x] = Math.random() > 0.3 ? 0 : 1;
       }
     }
-    maze[0][0] = 0;
-    maze[rows - 1][cols - 1] = 2;
+    maze[0][0] = 0; // старт
+    maze[rows - 1][cols - 1] = 2; // цель
     if (!isPathAvailable(maze)) {
       return generateRandomMaze();
     }
@@ -178,28 +198,31 @@
   }
 
   function renderMaze() {
-    mazeContainer.querySelectorAll('.cell').forEach(cell => cell.remove()); // удаляем клетки, не трогаем steam и player
+    mazeContainer.innerHTML = '';
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
         const cell = document.createElement('div');
         cell.classList.add('cell');
         if (mazeData[y][x] === 1) cell.classList.add('wall');
-        else if (mazeData[y][x] === 2) cell.classList.add('goal');
+        else if (mazeData[y][x] === 2) {
+          cell.classList.add('goal');
+          // Добавляем пар (steam) в ячейку финиша
+          for (let i = 0; i < 3; i++) {
+            const steam = document.createElement('div');
+            steam.classList.add('steam');
+            cell.appendChild(steam);
+          }
+        }
         mazeContainer.appendChild(cell);
       }
     }
+    mazeContainer.appendChild(playerDiv);
     updatePlayerPosition();
-    updateSteamPosition();
   }
 
   function updatePlayerPosition() {
     playerDiv.style.left = playerPosition.x * 30 + 'px';
     playerDiv.style.top = playerPosition.y * 30 + 'px';
-  }
-
-  function updateSteamPosition() {
-    steam.style.left = (cols - 1) * 30 + 'px';
-    steam.style.top = (rows - 1) * 30 - 50 + 'px'; // немного выше финишной клетки
   }
 
   function generateNewMaze() {
@@ -257,7 +280,6 @@
     touchStartX = touch.clientX;
     touchStartY = touch.clientY;
   });
-
   window.addEventListener('touchend', (event) => {
     const touch = event.changedTouches[0];
     const touchEndX = touch.clientX;
@@ -265,11 +287,11 @@
     const diffX = touchEndX - touchStartX;
     const diffY = touchEndY - touchStartY;
     if (Math.abs(diffX) > Math.abs(diffY)) {
-      if (diffX > 0) movePlayer('right');
-      else movePlayer('left');
+      if (diffX > 30) movePlayer('right');
+      else if (diffX < -30) movePlayer('left');
     } else {
-      if (diffY > 0) movePlayer('down');
-      else movePlayer('up');
+      if (diffY > 30) movePlayer('down');
+      else if (diffY < -30) movePlayer('up');
     }
   });
 
