@@ -13,6 +13,7 @@ body {
 .maze {
   position: relative;
   display: grid;
+  user-select: none;
   grid-template-columns: repeat(10, 30px);
   grid-template-rows: repeat(10, 30px);
   gap: 0px;
@@ -26,6 +27,7 @@ body {
   height: 30px;
   background-color: #1A1A1A;
   border: 0px solid #1A1A1A;
+  user-select: none;
   position: relative;
 }
 .wall {
@@ -42,6 +44,7 @@ body {
   border-radius: 50%;
   transition: top 0.3s ease, left 0.3s ease;
   pointer-events: none;
+  user-select: none;
   z-index: 2;
 }
 #steam {
