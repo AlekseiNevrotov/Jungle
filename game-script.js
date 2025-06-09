@@ -74,7 +74,7 @@ function updatePlayerPosition() {
   playerDiv.style.top = playerPosition.y * 30 + 'px';
 }
 function updateSteamPosition() {
-  steam.style.left = (cols - 1) * 30 + 'px';
+  steam.style.left = (cols - 1) * 29 + 'px';
   steam.style.top = (rows - 1) * 30 - 50 + 'px';
 }
 function generateNewMaze() {
