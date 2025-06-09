@@ -1,5 +1,5 @@
 const rows = 10;
-const cols = 13;
+const cols = 14;
 let mazeData = generateRandomMaze();
 let playerPosition = { x: 0, y: 0 };
 const mazeContainer = document.getElementById('maze');
@@ -74,8 +74,8 @@ function updatePlayerPosition() {
   playerDiv.style.top = playerPosition.y * 30 + 'px';
 }
 function updateSteamPosition() {
-  steam.style.left = (cols - 1) * 29 + 'px';
-  steam.style.top = (rows - 1) * 30 - 50 + 'px';
+  steam.style.left = (cols - 1) * 19 + 'px';
+  steam.style.top = (rows - 1) * 42 - 50 + 'px';
 }
 function generateNewMaze() {
   mazeData = generateRandomMaze();
