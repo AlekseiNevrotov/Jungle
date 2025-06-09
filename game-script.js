@@ -1,5 +1,5 @@
 const rows = 10;
-const cols = 10;
+const cols = 13;
 let mazeData = generateRandomMaze();
 let playerPosition = { x: 0, y: 0 };
 const mazeContainer = document.getElementById('maze');
