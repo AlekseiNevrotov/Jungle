@@ -34,13 +34,13 @@ body {
   background-color: #017550;
 }
 .goal {
-  background-color: #8A49A1;
+  background-color: #CBFFFF;
 }
 .player {
   position: absolute;
   width: 30px;
   height: 30px;
-  background-color: #FF842C;
+  background-color: #8A49A1;
   border-radius: 50%;
   transition: top 0.3s ease, left 0.3s ease;
   pointer-events: none;
