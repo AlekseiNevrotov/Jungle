@@ -159,11 +159,10 @@ refreshBtn.addEventListener('touchcancel', () => {
 refreshBtn.addEventListener('click', generateNewMaze);
 renderMaze();
 let lastTouchEnd = 0;
-
 document.addEventListener('touchend', function (event) {
   const now = new Date().getTime();
   if (now - lastTouchEnd <= 300) {
-    event.preventDefault(); // блокируем второй тап
+    event.preventDefault();
   }
   lastTouchEnd = now;
 }, false);
