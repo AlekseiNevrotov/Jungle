@@ -9,6 +9,7 @@ body {
   margin: 0;
   background-color: #1A1A1A;
   overflow: hidden;
+  touch-action: manipulation;
 }
 .maze {
   position: relative;
