@@ -111,7 +111,7 @@ function movePlayer(direction) {
     newX += 1;
   }
   if (mazeData[newY][newX] === 2) {
-    alert('Поздравляем! Ты победил!');
+    alert('Поздравляем! Ты победил.');
   }
   playerPosition = { x: newX, y: newY };
   updatePlayerPosition();
