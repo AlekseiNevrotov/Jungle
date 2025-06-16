@@ -111,7 +111,7 @@ function movePlayer(direction) {
     newX += 1;
   }
   if (mazeData[newY][newX] === 2) {
-    alert('Поздравляем! Вы в Jungle!');
+    alert('Поздравляем! Вы прошли лабиринт «Чайный Путь»!');
   }
   playerPosition = { x: newX, y: newY };
   updatePlayerPosition();
