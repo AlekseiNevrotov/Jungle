@@ -111,6 +111,8 @@ function movePlayer(direction) {
     newX += 1;
   }
   if (mazeData[newY][newX] === 2) {
+    const winSound = document.getElementById('winSound');
+  winSound.play();
     alert('Поздравляем! Вы победили.');
   }
   playerPosition = { x: newX, y: newY };
