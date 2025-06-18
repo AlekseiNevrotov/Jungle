@@ -56,6 +56,7 @@ function isPathAvailable(maze) {
   return false;
 }
 let audioUnlocked = false;
+
 function unlockAudio() {
   if (!audioUnlocked) {
     const audio = document.getElementById('winSound');
@@ -64,11 +65,15 @@ function unlockAudio() {
       audio.currentTime = 0;
       audioUnlocked = true;
     }).catch(() => {
+      // Ошибка ожидаема до первого взаимодействия, ничего не делаем
     });
   }
 }
+
+// Слушатели только один раз, при первом касании или клике
 window.addEventListener('touchstart', unlockAudio, { once: true });
 window.addEventListener('click', unlockAudio, { once: true });
+
 function renderMaze() {
   mazeContainer.querySelectorAll('.cell').forEach(cell => cell.remove());
   for (let y = 0; y < rows; y++) {
