@@ -55,6 +55,25 @@ function isPathAvailable(maze) {
   }
   return false;
 }
+let audioUnlocked = false;
+
+function unlockAudio() {
+  if (!audioUnlocked) {
+    const audio = document.getElementById('winSound');
+    audio.play().then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+      audioUnlocked = true;
+    }).catch(() => {
+      // Ошибка ожидаема до первого взаимодействия, ничего не делаем
+    });
+  }
+}
+
+// Слушатели только один раз, при первом касании или клике
+window.addEventListener('touchstart', unlockAudio, { once: true });
+window.addEventListener('click', unlockAudio, { once: true });
+
 function renderMaze() {
   mazeContainer.querySelectorAll('.cell').forEach(cell => cell.remove());
   for (let y = 0; y < rows; y++) {
@@ -112,7 +131,7 @@ function movePlayer(direction) {
   }
   if (mazeData[newY][newX] === 2) {
     const winSound = document.getElementById('winSound');
-  winSound.play();
+  document.getElementById('winSound').play();
     alert('Поздравляем! Вы победили.');
   }
   playerPosition = { x: newX, y: newY };
