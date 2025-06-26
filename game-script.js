@@ -127,6 +127,7 @@ function movePlayer(direction) {
     const winSound = document.getElementById('winSound');
     winSound.play();
     alert('Поздравляем! Вы победили.');
+    window.location.href = 'https://artplacejungle.tilda.ws/';
   }
   playerPosition = { x: newX, y: newY };
   updatePlayerPosition();
