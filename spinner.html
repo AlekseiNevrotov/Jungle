@@ -41,7 +41,7 @@
                 if (progress <= 100) {
                     loaderBar.style.width = progress + "%";
                     progress++;
-                    setTimeout(updateProgress, 10);
+                    setTimeout(updateProgress, 0.5);
                 }
             }
             updateProgress(); 
