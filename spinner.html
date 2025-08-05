@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прелоадер</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; 
+            background-color: #1A1A1A; 
+            margin: 0; 
+        }
+        .loader-container {
+            width: 200px; 
+            background-color: #1A1A1A; 
+            border-radius: 10px; 
+            overflow: hidden;
+            position: relative;
+            height: 5px;
+        }
+        .loader-bar {
+            height: 100%; 
+            width: 0; 
+            background-color: #017550; 
+            transition: width 0.5s ease-in-out; 
+        }
+    </style>
+</head>
+<body>
+    <div class="loader-container">
+        <div class="loader-bar" id="loader-bar"></div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let loaderBar = document.getElementById("loader-bar");
+            let progress = 0;
+            function updateProgress() {
+                if (progress <= 100) {
+                    loaderBar.style.width = progress + "%";
+                    progress++;
+                    setTimeout(updateProgress, 10);
+                }
+            }
+            updateProgress(); 
+        });
+    </script>
+</body>
+</html>
