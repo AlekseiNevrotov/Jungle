@@ -99,3 +99,15 @@ button:active {
   user-select: none; 
   -webkit-touch-callout: none;
 }
+@media (max-height: 500px) and (orientation: landscape) {
+    body {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        height: 100vh;
+        justify-content: flex-start;
+    }
+    .maze {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
