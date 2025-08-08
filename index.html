@@ -7,9 +7,39 @@
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="game-style.css" />
 </head>
+<style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; 
+            background-color: #1A1A1A; 
+            margin: 0; 
+        }
+        .loader-container {
+            width: 200px; 
+            background-color: #1A1A1A; 
+            border-radius: 10px; 
+            overflow: hidden;
+            position: relative;
+            height: 5px;
+        }
+        .loader-bar {
+            height: 100%; 
+            width: 0; 
+            background-color: #017550; 
+            transition: width 0.5s ease-in-out; 
+        }
+        .hidden { display: none !important; }
+    </style>
 <body>
+  <div id="preloader">
+        <div class="loader-container">
+            <div class="loader-bar" id="loader-bar"></div>
+        </div>
+    </div>
   <audio id="winSound" src="hit.wav" preload="auto"></audio>
-  <div class="maze" id="maze">
+  <div class="maze hidden" id="maze">
     <svg id="steam" viewBox="0 0 60 60" aria-hidden="true" >
       <circle cx="30" cy="50" r="4" fill="white" opacity="0.2">
         <animate attributeName="cy" values="50;20" dur="2s" repeatCount="indefinite"/>
@@ -25,7 +55,27 @@
       </circle>
     </svg>
   </div>
-  <button id="refreshBtn">Обновить лабиринт</button>
+  <button id="refreshBtn" class="hidden">Обновить лабиринт</button>
+  <script>
+document.addEventListener("DOMContentLoaded", function() {
+    let loaderBar = document.getElementById("loader-bar");
+    let progress = 0;
+    function updateProgress() {
+        if (progress <= 100) {
+            loaderBar.style.width = progress + "%";
+            progress++;
+            setTimeout(updateProgress, 5);
+        } else {
+            setTimeout(function() {
+                document.getElementById("preloader").style.display = "none";
+                document.getElementById("maze").classList.remove("hidden");
+                document.getElementById("refreshBtn").classList.remove("hidden");
+            }, 300);
+        }
+    }
+    updateProgress(); 
+});
+</script>
   <script src="game-script.js"></script>
 </body>
 </html>
