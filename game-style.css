@@ -101,13 +101,11 @@ button:active {
 }
 @media (max-height: 500px) and (orientation: landscape) {
     body {
-        padding-top: 10px;
-        padding-bottom: 10px;
+        padding-top: -20px;
         height: 100vh;
         justify-content: flex-start;
     }
     .maze {
-        margin-top: 10px;
-        margin-bottom: 10px;
+        margin-top: -20px;
     }
 }
