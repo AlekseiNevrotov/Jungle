@@ -101,7 +101,7 @@ button:active {
 }
 @media (max-height: 500px) and (orientation: landscape) {
     body {
-        padding-top: -600px;
+        padding-top: -60px;
         height: 100vh;
         justify-content: flex-start;
     }
